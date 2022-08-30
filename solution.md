@@ -4,6 +4,8 @@
 - [terraform](https://www.terraform.io/docs/cli/commands/index.html)
 - [awscli](https://aws.amazon.com/cli/)
 - [azurecli](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+- [awssamcli](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+
 
 ## Initialization
 
