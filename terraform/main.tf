@@ -42,3 +42,29 @@ resource "aws_route" "default_route" {
 
 }
 
+resource "aws_route_table_association" "kiki_public_assoc" {
+  subnet_id      = aws_subnet.kiki_public_subnet.id
+  route_table_id = aws_route_table.kiki_public_rt.id
+}
+
+resource "aws_security_group" "kiki_sg" {
+  name        = "dev_sg"
+  description = "dev security group"
+  vpc_id      = aws_vpc.kiki_vpc.id
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [aws_vpc.kiki_vpc.cidr_block]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+

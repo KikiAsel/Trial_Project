@@ -1,32 +1,44 @@
-resource "aws_iam_role" "iam_for_lambda" {
-  name = "iam_for_lambda"
+provider "archive" {}
 
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
+data "archive_file" "zip" {
+  type        = "zip"
+  source_file = "hello_kiki_lambda.py"
+  output_path = "hello_kiki_lambda.zip"
+}
+
+data "aws_iam_policy_document" "policy" {
+  statement {
+    sid    = ""
+    effect = "Allow"
+
+    principals {
+      identifiers = ["lambda.amazonaws.com"]
+      type        = "Service"
     }
-  ]
-}
-EOF
+
+    actions = ["sts:AssumeRole"]
+  }
 }
 
-resource "aws_lambda_function" "test_lambda" {
-  filename      = "lambda_function_payload.zip"
-  function_name = "lambda_function_name"
-  role          = aws_iam_role.iam_for_lambda.arn
-  handler       = "index.test"
-  runtime       = "nodejs14.x"
+resource "aws_iam_role" "iam_for_lambda" {
+  name               = "iam_for_lambda_kiki"
+  assume_role_policy = data.aws_iam_policy_document.policy.json
+}
 
-  ephemeral_storage {
-    size = 10240 # Min 512 MB and the Max 10240 MB
+resource "aws_lambda_function" "lambda" {
+  function_name = "hello_lambda_kiki"
+
+  filename         = data.archive_file.zip.output_path
+  source_code_hash = data.archive_file.zip.output_base64sha256
+
+  role    = aws_iam_role.iam_for_lambda.arn
+  handler = "hello_lambda.lambda_handler"
+  runtime = "python3.9"
+
+  environment {
+    variables = {
+      greeting = "Hello"
+    }
   }
 }
 
