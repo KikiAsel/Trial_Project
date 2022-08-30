@@ -36,5 +36,3 @@ jobs:
     - name: Terraform Format
       run: terraform fmt -check
 
-	    defaults: |
-          terraform fmt -check -recursive
