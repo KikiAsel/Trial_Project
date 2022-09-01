@@ -1,31 +1,9 @@
-# import json
-# import ssl
-# import socket
-# import datetime
+import ssl
+import OpenSSL.SSL
 
-# def lambda_handler(event, context):
-#     message = 'Hello {Kiki} {Anwar} Your function executed successfully!'.format(event['first_name'], event['last_name'])
-#     {"first_name": "Kiki",
-#      "last_name": "Anwar"} 
+def get_SSL_Expiry_Date(host, port):
+    cert = ssl.get_server_certificate((host, port))
+    x509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, cert)
+    print(x509.get_notAfter())
 
-#     return { 'message' : message }
-
-  
-# def ssl_expiry_datetime(host, port=443):
-#     ssl_date_fmt = r'%b %d %H:%M:%S %Y %Z'
-
-#     context = ssl.create_default_context()
-#     conn = context.wrap_socket(
-#         socket.socket(socket.AF_INET),
-#         server_hostname=host,
-#     )
-#     # 3 second timeout because Lambda has runtime limitations
-#     conn.settimeout(3.0)
-#     conn.connect((host, port))
-#     ssl_info = conn.getpeercert()
-#     print(ssl_info)
-#     # parse the string from the certificate into a Python datetime object
-#     res = datetime.datetime.strptime(ssl_info['notAfter'], ssl_date_fmt)
-#     return res
-
-# print(ssl_expiry_datetime("google.com"))
+get_SSL_Expiry_Date("google.com", 443)
